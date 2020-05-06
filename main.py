@@ -6,15 +6,25 @@ import urllib.request
 from werkzeug.utils import secure_filename
 from flask_dropzone import Dropzone
 
-
 #Modulos Internos
 from modules.lotes_site.lotesite import getlotesite
 from modules.detail_lote_site.detaillotesite import getdetaillotesite
 from app import UPLOAD_FOLDER
-from config import ConfigSectionMap as config
+from config import ConfigSectionMap
 
-EXTENSION = config('Extension')
-print(EXTENSION)
+
+#Configuraciones Iiciales
+extension = ConfigSectionMap('Extension')
+separator = ConfigSectionMap('Separator')
+fileencode = ConfigSectionMap('FileEncode')
+
+EXTENSION = extension['extensionallow']
+EXTENSION = (json.loads(EXTENSION.replace("'",'"')))
+SEPARATOR = separator['type']
+SEPARATOR = (json.loads(SEPARATOR.replace("'",'"')))
+FILEENCODE = fileencode['typefile']
+FILEENCODE = (json.loads(FILEENCODE.replace("'",'"')))
+
 
 
 app = Flask(__name__)
@@ -25,7 +35,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 3000 * 1024 * 1024
 
 #Extensiones peritidas CSV TXT JSONLINE
-ALLOWED_EXTENSIONS = set(['csv', 'txt', 'jsonl'])
+ALLOWED_EXTENSIONS = set(EXTENSION)
 
 
 def allowed_file(filename):
@@ -53,9 +63,9 @@ def getDetailLoteSite():
 
 @app.route('/upload/')
 def upload_form():
-    l_encode = ["UTF-8", "JSON","ASCII"]
+    l_encode = FILEENCODE
     l_tiparch = ALLOWED_EXTENSIONS
-    l_sepcol = [",",";",".",":","-","|"]
+    l_sepcol = SEPARATOR
     l_sepfil = l_sepcol
     return render_template('upload.html', list_encode= l_encode,
                         tiparch= l_tiparch,sepcol=l_sepcol,sepfil=l_sepfil)
