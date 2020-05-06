@@ -1,0 +1,8 @@
+from flask import Flask
+
+UPLOAD_FOLDER = '/home/quintanada/Pictures/prueba/'
+
+app = Flask(__name__)
+app.secret_key = "esto-es-una-clave-secreta"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
